@@ -1,0 +1,39 @@
+version: '3'
+services:
+  airflow:
+    image: puckel/docker-airflow
+    environment:
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://user:password@postgres:5432/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/usr/local/airflow/dags
+      - ./plugins:/usr/local/airflow/plugins
+    depends_on:
+      - postgres
+      - redis
+  jupyter:
+    image: jupyter/scipy-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    depends_on:
+      - dask
+  dask:
+    image: daskdev/dask:latest
+    ports:
+      - "8786:8786"
+    command: dask-scheduler --port 8786
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=airflow
+  redis:
+    image: redis:5-alpine
