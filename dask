@@ -1,0 +1,8 @@
+FROM daskdev/dask:latest
+
+EXPOSE 8786
+
+CMD ["dask-scheduler", "--port", "8786"]
+
+# Use the command below to build the image
+# docker build -t dask .
