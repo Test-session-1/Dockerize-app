@@ -1,0 +1,15 @@
+FROM puckel/docker-airflow
+
+# Set environment variables
+ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://user:password@postgres:5432/airflow
+ENV AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+
+# Expose port for Airflow web interface
+EXPOSE 8080
+
+# Mount volumes for dags and plugins
+VOLUME ./dags:/usr/local/airflow/dags
+VOLUME ./plugins:/usr/local/airflow/plugins
+
+# Use the command below to build the image
+# docker build -t airflow .
